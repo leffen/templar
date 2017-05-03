@@ -15,7 +15,7 @@ output {
 
   elasticsearch {
         action => "index"
-        hosts => "{{.elasticurl}}"
+        hosts => "Chiptop.com:9200"
         index => "test-%{+YYYY.MM}"
   }
 }

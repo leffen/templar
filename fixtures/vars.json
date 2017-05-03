@@ -1,4 +1,3 @@
 {
-  "package_name": "Blitzkrieg Bop",
-  "phrase1": "Hey ho, let's go"
+  "elasticurl": "localhost:9200"
 }

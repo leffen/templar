@@ -8,46 +8,65 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"fmt"
+	"os"
 )
 
 func TestTemplateVars(t *testing.T) {
 
-	fmt.Println("Running Test with vars...")
+	fmt.Println("Testing vars")
 
 	params := make(map[string]string)
-	params["package_name"] = "Blitzkrieg Bop"
-	params["phrase1"] = "Hey ho, let's go"
-	out, _ := ParseTemplateFile("fixtures/test.tpl", params)
-	assert.Contains(t, out, "# Blitzkrieg Bop")
-	assert.Contains(t, out, "Hey ho, let's go")
-	fmt.Println(out)
-	fmt.Println("Finished Test with vars...")
+	params["elasticurl"] = "Chiptop.com:9200"
 
+	out, _ := ParseTemplateFile("fixtures/test.tpl", params)
+	assert.Contains(t, out, params["elasticurl"])
+	fmt.Println("Test done successfully.")
 }
 
 func TestTemplateJson(t *testing.T) {
-	fmt.Println("Running Test with JSON file...")
+	fmt.Println("Test JSON data")
 	file, _ := ioutil.ReadFile("fixtures/vars.json")
 
-	var varsJson interface{}
-	json.Unmarshal(file, &varsJson)
+	var varsJSON interface{}
+	json.Unmarshal(file, &varsJSON)
 
-	outJson, _ := ParseTemplateFile("fixtures/test.md.tpl", varsJson)
-	//assert.Contains(t, out, []string{"# Blitzkrieg Bop","Hey ho, let's go"})
-	assert.Contains(t, outJson, "Hey ho, let's go")
+	outJSON, _ := ParseTemplateFile("fixtures/test.tpl", varsJSON)
+	assert.Contains(t, outJSON, "localhost:9200")
 
-	fmt.Println(string(outJson))
 	fmt.Println("Finished Test with JSON file...")
 
 }
+
 func TestTemplateErrorJson(t *testing.T) {
 	fmt.Println("Running Testing throwing error...")
 	file, _ := ioutil.ReadFile("fixtures/vars.json-should-not-exist")
 
-	var varsJson interface{}
-	json.Unmarshal(file, &varsJson)
+	var varsJSON interface{}
+	json.Unmarshal(file, &varsJSON)
 
-	_, err := ParseTemplateFile("should-not-exist.tpl", varsJson)
+	_, err := ParseTemplateFile("should-not-exist.tpl", varsJSON)
 	assert.Error(t, err)
-	fmt.Println("Finished Testing throwing error...\n")
+	fmt.Println("Test done")
+}
+
+func TestCreateFileByTemplate(t *testing.T) {
+
+	fmt.Println("Testing vars")
+
+	params := make(map[string]string)
+	params["elasticurl"] = "Chiptop.com:9200"
+
+	destFile := "fixtures/test.out"
+
+	if _, err := os.Stat(destFile); os.IsExist(err) {
+		_ = os.Remove(destFile)
+	}
+
+	err := CreateFileByTemplate("fixtures/test.tpl", destFile, params)
+	if err != nil {
+		t.Errorf("Error creating file by template %v", err)
+	}
+
+	fmt.Println("Test done successfully.")
+
 }
