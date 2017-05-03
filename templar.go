@@ -13,7 +13,7 @@ func CreateFileByTemplate(templateFile, destFile string, params interface{}) err
 		return err
 	}
 
-	return ioutil.WriteFile(destFile, []byte(template), 0644)
+	return ioutil.WriteFile(destFile, []byte(template), 0755)
 }
 
 // ParseTemplateFile parses a template file and supstitutes the variables, returns template instance with variables replaced
